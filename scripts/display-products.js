@@ -41,7 +41,7 @@ export function displayProducts(products){
 
             <div class="product-spacer"></div>
 
-            <div class="added-to-cart js-added-to-cart">
+            <div class="added-to-cart js-added-to-cart-${element.id}">
               <img src="images/icons/checkmark.png">
               Added
             </div>
