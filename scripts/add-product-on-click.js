@@ -5,7 +5,6 @@ export function addProductOnClick(cart){
 
     button.addEventListener('click',() => {
       const productId = button.dataset.productId;
-      // const productName = button.dataset.productName;
       const choosenNumberOfProducts = parseInt(document.querySelector(`.js-quantity-selector-${productId}`).value);
 
       let matchingProduct;
@@ -16,7 +15,6 @@ export function addProductOnClick(cart){
       matchingProduct ? matchingProduct.quantity+=choosenNumberOfProducts :
       cart.push({
         productId: productId,
-        // productName: productName,
         quantity: choosenNumberOfProducts
       });
 

@@ -1,8 +1,44 @@
 import { cart } from "../data/cart.js";
+import { products } from "../data/products.js";
+
+
+displayBasketProducts();
+
+
+
+
+function prepareCart () {
+  
+    
+    const cartData = JSON.parse(localStorage.getItem('cart'));
+    console.log(cartData)
+    console.log(products)
+    let tmp;
+    return products.map((product) => {
+      tmp = cartData.filter((element) => {
+        element.productId === product.id
+      })
+        return {
+          id: product.id,
+          image: product.image,
+          name: product.name,
+          quantity: tmp.quantity,
+          priceCents: product.priceCents,
+        }
+      
+    
+    }
+  )
+}
+
+
+
 
 function displayBasketProducts () {
+  let fuckingcart = prepareCart();
+  console.log(fuckingcart)
   let HTML = ''
-  cart.forEach((cartItem) => {
+  fuckingcart.forEach((cartItem) => {
     HTML += `
     <div class="cart-item-container-${cartItem.id}">
             <div class="delivery-date">
@@ -14,15 +50,15 @@ function displayBasketProducts () {
                 src=${cartItem.image}>
 
               <div class="cart-item-details">
-                <div class="product-name">
+                <div class=${cartItem.name}>
                   Black and Gray Athletic Cotton Socks - 6 Pairs
                 </div>
                 <div class="product-price">
-                  $10.90
+                  $${cartItem.quantity*cartItem.priceCents}
                 </div>
                 <div class="product-quantity">
                   <span>
-                    Quantity: <span class="quantity-label">2</span>
+                    Quantity: <span class="quantity-label">${cartItem.quantity}</span>
                   </span>
                   <span class="update-quantity-link link-primary">
                     Update
@@ -79,6 +115,9 @@ function displayBasketProducts () {
               </div>
             </div>
           </div>`
-  })
+    })
 
-}
+    document.querySelector('.order-summary').innerHTML = HTML;
+  }
+
+
