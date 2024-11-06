@@ -15,7 +15,8 @@ export function addProductOnClick(cart){
       matchingProduct ? matchingProduct.quantity+=choosenNumberOfProducts :
       cart.push({
         productId: productId,
-        quantity: choosenNumberOfProducts
+        quantity: choosenNumberOfProducts,
+        deliveryOption: 3
       });
 
       updateLocalStorageCart(cart);
