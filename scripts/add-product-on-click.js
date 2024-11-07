@@ -54,7 +54,7 @@ function updateNumberOfProductsInBasket(cart, choosenNumberOfProducts) {
   
 }
 
-function updateLocalStorageCart(cart){
+export function updateLocalStorageCart(cart){
   localStorage.setItem('cart', JSON.stringify(cart));
   
 }
