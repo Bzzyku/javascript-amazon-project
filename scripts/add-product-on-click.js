@@ -57,19 +57,18 @@ function updateNumberOfProductsInBasket(cart, choosenNumberOfProducts) {
 
 export function updateLocalStorageCart(cart){
   localStorage.setItem('cart', JSON.stringify(cart));
-  
 }
 
 function updateNumberOfProductsInLocalStorageBasket(numberOfProducts){
 
-    
     localStorage.setItem('numberOfProducts',JSON.stringify(numberOfProducts + (JSON.parse(localStorage.getItem('numberOfProducts')))||0));
+    
 }
 
 export function getLocalStorageValues (cart) {
-  
-  cart.push(...JSON.parse(localStorage.getItem('cart')));
-  console.log(cart);
+  if(JSON.parse(localStorage.getItem('cart'))){
+    cart.push(...JSON.parse(localStorage.getItem('cart')));
+  }
+
   document.querySelector(`.js-cart-quantity`).innerHTML = JSON.parse(localStorage.getItem('numberOfProducts')) || 0;
-  
 }

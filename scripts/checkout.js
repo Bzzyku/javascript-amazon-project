@@ -3,12 +3,11 @@ import { products } from "../data/products.js";
 import { parseCents } from "./cash.js";
 import { deliveryTime } from "./delivery-time.js";
 import { getLocalStorageValues, updateLocalStorageCart } from "./add-product-on-click.js";
-
-// getLocalStorageValues(cart)
+function renderOrderSummary(){
 displayBasketProducts();
-deleteButtonOnClick();
-deliveryOptionsEventListener();
+};
 
+renderOrderSummary();
 
 function prepareCart() {
   let cartData = JSON.parse(localStorage.getItem('cart'));
@@ -30,15 +29,13 @@ function prepareCart() {
 }
 
 function displayBasketProducts() {
-  console.log(prepareCart());
-  cart.push(...prepareCart());
+  
   let HTML = ''
-  cart.forEach((cartItem) => {
+  prepareCart().forEach((cartItem) => {
     let option;
     deliveryTime.forEach((e) => {
       if (e.id === cartItem.deliveryOption){
         option = e;
-        console.log(option)
       } 
     })
 
@@ -87,6 +84,8 @@ function displayBasketProducts() {
   })
   document.querySelector('.order-summary').innerHTML = HTML;
   
+  deleteButtonOnClick();
+  deliveryOptionsEventListener();
 }
 
 function deliveryOptionsHTML(cartItem) {
@@ -137,34 +136,35 @@ function deliveryOptionsEventListener() {
 
 
 function updateDeliveryOption(productId, deliveryId) {
-
-  cart.forEach((e) => {
+  const tempCart = JSON.parse(localStorage.getItem(`cart`))
+  tempCart.forEach((e) => {
    
     if (e.productId === productId) {
       e.deliveryOption = parseInt(deliveryId);
     }
   });
-  updateLocalStorageCart(cart)
+  updateLocalStorageCart(tempCart)
+  renderOrderSummary();
 }
 
 
-function deleteButtonOnClick() {
+function deleteButtonOnClick(tempCart) {
   document.querySelectorAll(`.js-delete-quantity-link`).forEach((link) => {
     link.addEventListener('click', () => {
       const productId = link.dataset.productId;
-      removeFromCart(productId);
+      removeFromCart(productId, tempCart);
     })
   })
 }
 
-function removeFromCart(productId) {
+function removeFromCart(productId, tempCart) {
   const newCart = [];
   JSON.parse(localStorage.getItem(`cart`)).forEach((e) => {
     if (e.productId !== productId) {
       newCart.push(e);
     }
   })
-  localStorage.setItem('cart', JSON.stringify(newCart));
-
+  updateLocalStorageCart(newCart);
+  tempCart = JSON.parse(localStorage.getItem('cart'));
   document.querySelector(`.cart-item-container-${productId}`).remove();
 }
