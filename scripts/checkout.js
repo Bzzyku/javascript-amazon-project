@@ -4,20 +4,20 @@ import { parseCents } from "./cash.js";
 import { deliveryTime } from "./delivery-time.js";
 import { getLocalStorageValues, updateLocalStorageCart } from "./add-product-on-click.js";
 
-
 // getLocalStorageValues(cart)
-displayBasketProducts(cart);
+displayBasketProducts();
 deleteButtonOnClick();
-deliveryOptionsEventListener(cart);
+deliveryOptionsEventListener();
 
 
-function prepareCart(cart) {
-  const cartData = JSON.parse(localStorage.getItem('cart'));
-  return cart = cartData.map((e) => {
+function prepareCart() {
+  let cartData = JSON.parse(localStorage.getItem('cart'));
+  console.log(cartData)
+    return cartData.map((e) => {
     const product = products.find((x) => e.productId === x.id);
     if (product) {
       return {
-        id: product.id,
+        productId: product.id,
         name: product.name,
         image: product.image,
         priceCents: product.priceCents,
@@ -25,17 +25,21 @@ function prepareCart(cart) {
         deliveryOption: e.deliveryOption
       };
     }
-  })
+  }).filter(Boolean);
 
 }
 
-function displayBasketProducts(cart) {
-
+function displayBasketProducts() {
+  console.log(prepareCart());
+  cart.push(...prepareCart());
   let HTML = ''
-  prepareCart(cart).forEach((cartItem) => {
+  cart.forEach((cartItem) => {
     let option;
     deliveryTime.forEach((e) => {
-      if (e.id === cartItem.deliveryOption) option = e;
+      if (e.id === cartItem.deliveryOption){
+        option = e;
+        console.log(option)
+      } 
     })
 
     const currentTime = dayjs();
@@ -43,7 +47,7 @@ function displayBasketProducts(cart) {
 
 
     HTML += `
-    <div class="cart-item-container-${cartItem.id}">
+    <div class="cart-item-container-${cartItem.productId}">
             <div class="delivery-date">
               Delivery date: ${date.format('dddd, MMMM D')}
             </div>
@@ -53,8 +57,8 @@ function displayBasketProducts(cart) {
                 src=${cartItem.image}>
 
               <div class="cart-item-details">
-                <div class=${cartItem.name}>
-                  Black and Gray Athletic Cotton Socks - 6 Pairs
+                <div class="cart-item-name">
+                ${cartItem.name}
                 </div>
                 <div class="product-price">
                   $${parseCents(cartItem.quantity * cartItem.priceCents)}
@@ -66,7 +70,7 @@ function displayBasketProducts(cart) {
                   <span class="update-quantity-link link-primary">
                     Update
                   </span>
-                  <span class="delete-quantity-link link-primary js-delete-quantity-link" data-product-id=${cartItem.id}>
+                  <span class="delete-quantity-link link-primary js-delete-quantity-link" data-product-id=${cartItem.productId}>
                     Delete
                   </span>
                 </div>
@@ -81,8 +85,8 @@ function displayBasketProducts(cart) {
             </div>
           </div>`
   })
-
   document.querySelector('.order-summary').innerHTML = HTML;
+  
 }
 
 function deliveryOptionsHTML(cartItem) {
@@ -100,11 +104,11 @@ function deliveryOptionsHTML(cartItem) {
     HTML +=
       `
         <div class="delivery-option js-delivery-option"
-        data-cart-item-id="${cartItem.id}"
+        data-cart-item-id="${cartItem.productId}"
         data-delivery-option-id="${e.id}">
           <input type="radio" ${isChecked ? `checked` : ``}
             class="delivery-option-input"
-            name="delivery-option-${cartItem.id}">
+            name="delivery-option-${cartItem.productId}">
           <div>
             <div class="delivery-option-date">
               ${date.format('dddd, MMMM D')}
@@ -119,23 +123,25 @@ function deliveryOptionsHTML(cartItem) {
   return HTML;
 }
 
-function deliveryOptionsEventListener(cart) {
+function deliveryOptionsEventListener() {
 
   document.querySelectorAll(`.js-delivery-option`).forEach((e => {
     e.addEventListener('click', () => {
 
       const { cartItemId, deliveryOptionId } = e.dataset;
-      updateDeliveryOption(cartItemId, deliveryOptionId, cart)
+
+      updateDeliveryOption(cartItemId, deliveryOptionId)
     });
   }));
 }
 
 
-function updateDeliveryOption(productId, deliveryId, cart) {
-  
+function updateDeliveryOption(productId, deliveryId) {
+
   cart.forEach((e) => {
-    if (e.productId === parseInt(productId)) {
-      e.deliveryOption = deliveryId;
+   
+    if (e.productId === productId) {
+      e.deliveryOption = parseInt(deliveryId);
     }
   });
   updateLocalStorageCart(cart)

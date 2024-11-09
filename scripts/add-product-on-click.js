@@ -1,3 +1,4 @@
+ 
 
 export function addProductOnClick(cart){
   
@@ -6,7 +7,7 @@ export function addProductOnClick(cart){
     button.addEventListener('click',() => {
       const productId = button.dataset.productId;
       const choosenNumberOfProducts = parseInt(document.querySelector(`.js-quantity-selector-${productId}`).value);
-
+      console.log(cart)
       let matchingProduct;
       cart.forEach((element) => {
         productId ===  element.productId ? matchingProduct = element : false; 
@@ -67,7 +68,8 @@ function updateNumberOfProductsInLocalStorageBasket(numberOfProducts){
 
 export function getLocalStorageValues (cart) {
   
-  cart = JSON.parse(localStorage.getItem('cart'));
+  cart.push(...JSON.parse(localStorage.getItem('cart')));
+  console.log(cart);
   document.querySelector(`.js-cart-quantity`).innerHTML = JSON.parse(localStorage.getItem('numberOfProducts')) || 0;
   
 }
